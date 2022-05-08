@@ -28,7 +28,7 @@ async function run() {
       res.send(result);
     });
 
-    // Product Details Api ====
+    // Product Details Api 
 
     app.get("/inventory/:id", async (req, res) => {
       const id = req.params.id;
@@ -37,7 +37,7 @@ async function run() {
       res.send(productId);
     });
 
-    // Delete Single Product ====
+    // Delete Single Product 
 
     app.delete("/inventory/:id", async (req, res) => {
       const id = req.params.id;
@@ -46,24 +46,8 @@ async function run() {
       res.send(deletProduct);
     });
 
-    app.get("/inventory/:id", async (req, res) => {
-      const id = req.params.id;
-      const updateProduct = req.body;
-      const filter = { _id: ObjectId(id) };
-      const option = { upsert: true };
-      const updateDb = {
-        $set: {
-          quantity: updateProduct.quantity,
-        },
-      };
-      const update = await ProductCollection.updateOne(
-        filter,
-        updateDb,
-        option
-      );
-      res.send(update);
-    });
-
+    
+    
     // Product Add
 
     app.post("/inventory", async (req, res) => {
