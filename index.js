@@ -3,7 +3,7 @@ const cors = require("cors");
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const app = express();
 // middleware
 app.use(cors());
@@ -28,7 +28,7 @@ async function run() {
       res.send(result);
     });
 
-    // Product Details Api 
+    // Product Details Api
 
     app.get("/inventory/:id", async (req, res) => {
       const id = req.params.id;
@@ -37,7 +37,7 @@ async function run() {
       res.send(productId);
     });
 
-    // Delete Single Product 
+    // Delete Single Product
 
     app.delete("/inventory/:id", async (req, res) => {
       const id = req.params.id;
@@ -46,8 +46,24 @@ async function run() {
       res.send(deletProduct);
     });
 
-    
-    
+    app.put("/inventory/:id", async (req, res) => {
+      const newStock = { quantity: Number(req.query.quantity) };
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateStock = {
+        $set: {
+          quantity: newStock,
+        },
+      };
+      const result = await ProductCollection.updateOne(
+        filter,
+        updateStock,
+        options
+      );
+      res.send(result);
+    });
+
     // Product Add
 
     app.post("/inventory", async (req, res) => {
@@ -66,14 +82,14 @@ async function run() {
       res.send(myitem);
     });
 
-    // create token login 
-    app.post('/login', async(req, res) => {
+    // create token login
+    app.post("/login", async (req, res) => {
       const user = req.body;
-      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SCREET,{
-        expiresIn: '1d'
-      })
-      res.send({accessToken})
-    })
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SCREET, {
+        expiresIn: "1d",
+      });
+      res.send({ accessToken });
+    });
   } finally {
   }
 }
