@@ -3,7 +3,7 @@ const cors = require("cors");
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
-
+const jwt = require('jsonwebtoken');
 const app = express();
 // middleware
 app.use(cors());
@@ -28,7 +28,68 @@ async function run() {
       res.send(result);
     });
 
+    // Product Details Api ====
 
+    app.get("/inventory/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const productId = await ProductCollection.findOne(query);
+      res.send(productId);
+    });
+
+    // Delete Single Product ====
+
+    app.delete("/inventory/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const deletProduct = await ProductCollection.deleteOne(query);
+      res.send(deletProduct);
+    });
+
+    app.get("/inventory/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateProduct = req.body;
+      const filter = { _id: ObjectId(id) };
+      const option = { upsert: true };
+      const updateDb = {
+        $set: {
+          quantity: updateProduct.quantity,
+        },
+      };
+      const update = await ProductCollection.updateOne(
+        filter,
+        updateDb,
+        option
+      );
+      res.send(update);
+    });
+
+    // Product Add
+
+    app.post("/inventory", async (req, res) => {
+      const query = req.body;
+      const newProduct = await ProductCollection.insertOne(query);
+      res.send(newProduct);
+    });
+
+    // Find Email All Products
+
+    app.get("/myItems", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const cursor = ProductCollection.find(query);
+      const myitem = await cursor.toArray();
+      res.send(myitem);
+    });
+
+    // create token login 
+    app.post('/login', async(req, res) => {
+      const user = req.body;
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SCREET,{
+        expiresIn: '1d'
+      })
+      res.send({accessToken})
+    })
   } finally {
   }
 }
