@@ -46,25 +46,6 @@ async function run() {
       res.send(deletProduct);
     });
 
-    
-    app.put("/inventory/:id", async (req, res) => {
-      const newStock = { quantity: Number(req.query.quantity) };
-      const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const options = { upsert: true };
-      const updateStock = {
-        $set: {
-          quantity: newStock,
-        },
-      };
-      const result = await ProductCollection.updateOne(
-        filter,
-        updateStock,
-        options
-      );
-      res.send(result);
-    });
-
     // Product Add
 
     app.post("/inventory", async (req, res) => {
