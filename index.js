@@ -46,6 +46,7 @@ async function run() {
       res.send(deletProduct);
     });
 
+    
     app.put("/inventory/:id", async (req, res) => {
       const newStock = { quantity: Number(req.query.quantity) };
       const id = req.params.id;
