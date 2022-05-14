@@ -54,6 +54,31 @@ async function run() {
       res.send(newProduct);
     });
 
+    // increse Stock
+
+    app.put("/inventory/:id", async (req, res) => {
+      const updatedProduct = req.body;
+      const { updatedQuantity } = updatedProduct;
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const options = { upsert: true };
+
+      const updateProduct = {
+        $set: {
+          quantity: updatedQuantity
+        },
+      };
+
+      const result = await ProductCollection.updateOne(
+        query,
+        updateProduct,
+        options
+      );
+      console.log(result);
+
+      res.send(result);
+    });
+
     // Find Email All Products
 
     app.get("/myItems", async (req, res) => {
