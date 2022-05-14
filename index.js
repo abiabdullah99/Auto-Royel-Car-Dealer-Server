@@ -56,28 +56,28 @@ async function run() {
 
     // increse Stock
 
-    app.put("/inventory/:id", async (req, res) => {
-      const updatedProduct = req.body;
-      const { updatedQuantity } = updatedProduct;
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const options = { upsert: true };
+    // app.put("/inventory/:id", async (req, res) => {
+    //   const updatedProduct = req.body;
+    //   const { updatedQuantity } = updatedProduct;
+    //   const id = req.params.id;
+    //   const query = { _id: ObjectId(id) };
+    //   const options = { upsert: true };
 
-      const updateProduct = {
-        $set: {
-          quantity: updatedQuantity
-        },
-      };
+    //   const updateProduct = {
+    //     $set: {
+    //       quantity: updatedQuantity
+    //     },
+    //   };
 
-      const result = await ProductCollection.updateOne(
-        query,
-        updateProduct,
-        options
-      );
-      console.log(result);
+    //   const result = await ProductCollection.updateOne(
+    //     query,
+    //     updateProduct,
+    //     options
+    //   );
+    //   console.log(result);
 
-      res.send(result);
-    });
+    //   res.send(result);
+    // });
 
     // Find Email All Products
 
@@ -96,6 +96,28 @@ async function run() {
         expiresIn: "1d",
       });
       res.send({ accessToken });
+    });
+
+
+    // update stock  quantity
+    app.put("/inventory/:id", async (req, res) => {
+      const id = req.params.id;
+      const newQuantity = req.body;
+
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          quantity: newQuantity.quantity,
+        },
+      };
+      const result = await ProductCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+
+      res.send(result);
     });
   } finally {
   }
